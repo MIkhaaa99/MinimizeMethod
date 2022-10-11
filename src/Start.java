@@ -9,6 +9,9 @@ public class Start {
         //return 2 * pow(x, 2) - 12 * x;
     }
 
+    public static double func1(double x) {
+        return 2 * pow(x, 2) - 12 * x;
+    }
     public static int[] svennMethod(double x0, double t) {
         while(true) {
             if(func(x0 - t) >= func(x0) && func(x0) <= func(x0 + t)) {
@@ -58,9 +61,33 @@ public class Start {
         return new double[] {func((a + b)/2), (a + b)/2};
     }
 
+    public static double methodThree(int[] arr) {
+        double a = arr[0];
+        double x = arr[0] + ((3 - Math.sqrt(5))/2) * (arr[1] - arr[0]);
+        double y = arr[0] + arr[1] - x;
+        double b = arr[1];
+
+        while(true) {
+            if(func(x) <= func(y)) {
+                b = y;
+                y = x;
+                x = a + b - x;
+            }
+            else {
+                a = x;
+                x = y;
+                y = a + b - y;
+            }
+
+            if(Math.abs(b - a) < 0.000001) {
+                return (a + b) / 2;
+            }
+        }
+    }
+
     public static void main(String[] args) {
         int[] arr = svennMethod(1, 2);
-        System.out.println("Неопределенный интервал: " + Arrays.toString(arr));
+        System.out.println("Неопределенный интервал: " + Arrays.toString(arr));git
         double[] result = methodOne(arr);
         System.out.println("Минимальное значение функции = " + result[0] + " в точке " + result[1]);
         //System.out.println(Arrays.toString(svennMethod(1, 0.2)));
