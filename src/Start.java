@@ -26,7 +26,7 @@ public class Start {
         }
     }
 
-    public static double methodOne(int[] arr) {
+    public static double[] methodOne(int[] arr) {
         int N = arr[1] - arr[0] - 1;
         int i = 1;
         double min = arr[0] + ((arr[1] - arr[0])/(N+1));
@@ -37,10 +37,11 @@ public class Start {
                 min = current;
             }
         }
-        return min;
+        double minFunc = func(min);
+        return new double[] {minFunc, min};
     }
 
-    public static double methodTwo(int[] arr) {
+    public static double[] methodTwo(int[] arr) {
         double delt = 0.01, eps = 0.01;
         double a = arr[0];
         double b = arr[1];
@@ -54,14 +55,14 @@ public class Start {
                 b = x2;
             }
         }
-        return (a + b)/2;
+        return new double[] {func((a + b)/2), (a + b)/2};
     }
 
     public static void main(String[] args) {
         int[] arr = svennMethod(1, 2);
         System.out.println("Неопределенный интервал: " + Arrays.toString(arr));
-        double result = methodTwo(arr);
-        System.out.println("min = " + result);
+        double[] result = methodOne(arr);
+        System.out.println("Минимальное значение функции = " + result[0] + " в точке " + result[1]);
         //System.out.println(Arrays.toString(svennMethod(1, 0.2)));
     }
 }
