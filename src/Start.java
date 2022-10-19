@@ -180,6 +180,35 @@ public class Start {
         return new double[] {func(x1), x1};
     }
 
+    public static double[] methodSix() {
+        List<Double> x = new ArrayList<>();
+        x.add(1.0);
+        double e1 = 0.0001;
+        double e2 = 0.00015;
+        int k = 0;
+        int M = 100;
+        do {
+            if(abs(funcDerivative(x.get(k))) < e1) {
+                return new double[] {func(x.get(k)), x.get(k)};
+            }
+            if(k >= M) {
+                return new double[] {func(x.get(k)), x.get(k)};
+            }
+            double t = 0.25;
+            t = func(x.get(k) - t * funcDerivative(x.get(k)));
+            x.add(x.get(k) - t * funcDerivative(x.get(k)));
+            if((abs(x.get(k+1) - x.get(k)) < e2) && ((abs(func(x.get(k+1) - x.get(k)))) < e2)) {
+                k--;
+                return new double[] {func(x.get(k)), x.get(k)};
+            }
+            else {
+                k++;
+            }
+        }
+        while(true);
+
+    }
+
     public static void main(String[] args) {
         int[] arr = svennMethod(1, 2);
         System.out.println("Неопределенный интервал: " + Arrays.toString(arr));
@@ -198,5 +227,8 @@ public class Start {
         System.out.println("===============================Градиентный спуск с постоянным шагом==========================");
         double[] result5 = methodFive();
         System.out.println("Минимальное значение функции = " + result5[0] + " в точке " + result5[1]);
+        System.out.println("===============================Метод наискорейшего градиентного спуска==========================");
+        double[] result6 = methodSix();
+        System.out.println("Минимальное значение функции = " + result6[0] + " в точке " + result6[1]);
     }
 }
