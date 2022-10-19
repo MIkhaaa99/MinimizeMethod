@@ -2,17 +2,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
 public class Start {
 
     public static double func(double x) {
-        return pow(x, 4) - 2 * x + 4;
         //return 0.75 * pow(x, 4) - 2 * pow(x, 3) + 2;
         //return 2 * pow(x, 2) - 12 * x;
+        //return 2 * pow(x, 3) + 5 * pow(x, 2) - 6 * x;
+        return pow(x, 4) - 2 * x + 4;
     }
 
     public static double funcDerivative(double x) {
+        //return 6 * pow(x, 2) + 10 * x - 12;
         return 4 * pow(x, 3) - 2;
     }
 
@@ -34,12 +37,12 @@ public class Start {
     }
 
     public static double[] methodOne(int[] arr) {
-        int N = arr[1] - arr[0] - 1;
+        int N = 1000;
         int i = 1;
-        double min = arr[0] + ((arr[1] - arr[0])/(N+1));
+        double min = arr[0] + (((arr[1] - arr[0])*1.0)/(N+1));
         while(i<=N) {
             i++;
-            double current = arr[0] + i*((arr[1] - arr[0])/(N+1));
+            double current = arr[0] + i*(((arr[1] - arr[0]) * 1.0)/(N+1));
             if(func(current) < func(min)) {
                 min = current;
             }
@@ -132,8 +135,6 @@ public class Start {
             }
         }
         while(true);
-//        z.add((a.get(N-2)+b.get(N-2)) / 2);
-//        y.add((a.get(N-2)+b.get(N-2)) / 2);
         y.add((a.get(N-2)+b.get(N-2)) / 2);
         z.add(y.get(N-1) + e);
         if(y.get(N-1) <= z.get(N-1)) {
@@ -147,54 +148,55 @@ public class Start {
         return new double[] {func((a.get(N-1) + b.get(N-1))/2), (a.get(N-1) + b.get(N-1))/2};
     }
 
-    public static double[] methodFourOld(int[] arr) {
-        double[] fib = {1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233};
-        int l = 1;
-        double e = 0.01;
-        int N = 0;
-
+    public static double[] methodFive() {
+        double x0 = 1;
+        double x1 = 1;
+        double e1 = 0.0001;
+        double e2 = 0.00015;
+        int M = 1000;
         int k = 0;
-        double a = arr[0];
-        double b = arr[1];
-        double y = a + (fib[N-2]/fib[N]) * (b - a);
-        double z = a + (fib[N-1]/fib[N]) * (b - a);
-
-        while(true) {
-            if(func(y) <= func(z)) {
-                b = z;
-                z = y;
-                y = a + (fib[N - k - 3]/fib[N - k - 1]) * (b - a);
+        do {
+            if(abs(funcDerivative(x1)) < e1) {
+                return new double[] {func(x1), x1};
             }
-            else {
-                a = y;
-                y = z;
-                z = a + (fib[N - k - 2]/fib[N - k - 1]) * (b - a);
+            if(k >= M) {
+                return new double[] {func(x1), x1};
             }
-            if(k != N - 3) {
-                k++;
+            double t0 = 1;
+            do {
+                t0 = t0 / 2;
+                //x0 = x1;
+                x1 = x0 - t0 * funcDerivative(x0);
+            }
+            while(func(x1) - func(x0) >= 0);
+            if((abs(x1 - x0) >= e2) || (abs(func(x1) - func(x0)) >= e2)) {
+                x0 = x1;
             }
             else {
                 break;
             }
         }
-        z = (a + b) / 2;
-        y = z;
-        z = y + e;
-        if(func(y) <= func(z)) {
-            b = z;
-        }
-        else {
-            a = y;
-        }
-        return new double[] {func((a + b) / 2), (a + b) / 2};
+        while(true);
+        return new double[] {func(x1), x1};
     }
 
     public static void main(String[] args) {
         int[] arr = svennMethod(1, 2);
         System.out.println("Неопределенный интервал: " + Arrays.toString(arr));
-        double[] result = methodFour(arr);
-        //double[] result = methodFour(new int[] {0, 10});
-        System.out.println("Минимальное значение функции = " + result[0] + " в точке " + result[1]);
-        //System.out.println(Arrays.toString(svennMethod(1, 0.2)));
+        System.out.println("===============================Метод равномерного поиска==========================");
+        double[] result1 = methodOne(arr);
+        System.out.println("Минимальное значение функции = " + result1[0] + " в точке " + result1[1]);
+        System.out.println("===============================Метод половинного деления (дитохомии)==========================");
+        double[] result2 = methodTwo(arr);
+        System.out.println("Минимальное значение функции = " + result2[0] + " в точке " + result2[1]);
+        System.out.println("===============================Метод золотого сечения==========================");
+        double[] result3 = methodThree(arr);
+        System.out.println("Минимальное значение функции = " + result3[0] + " в точке " + result3[1]);
+        System.out.println("===============================Метод Фибоначчи==========================");
+        double[] result4 = methodFour(arr);
+        System.out.println("Минимальное значение функции = " + result4[0] + " в точке " + result4[1]);
+        System.out.println("===============================Градиентный спуск с постоянным шагом==========================");
+        double[] result5 = methodFive();
+        System.out.println("Минимальное значение функции = " + result5[0] + " в точке " + result5[1]);
     }
 }
